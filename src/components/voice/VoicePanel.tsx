@@ -10,6 +10,7 @@ export const VoicePanel: React.FC = () => {
   const { voiceState, apiKey, setApiKey, startListening, stopListening, speakText } = useVoice();
   const [inputText, setInputText] = useState('');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [tempApiKey, setTempApiKey] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +20,13 @@ export const VoicePanel: React.FC = () => {
     }
   };
 
+  const handleOpenSettings = () => {
+    setTempApiKey(apiKey);
+    setSettingsOpen(true);
+  };
+
   const handleSaveApiKey = () => {
+    setApiKey(tempApiKey);
     setSettingsOpen(false);
   };
 
@@ -30,7 +37,7 @@ export const VoicePanel: React.FC = () => {
         
         <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={handleOpenSettings}>
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </Button>
@@ -50,8 +57,8 @@ export const VoicePanel: React.FC = () => {
               <Input
                 id="apiKey"
                 type="password"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
+                value={tempApiKey}
+                onChange={(e) => setTempApiKey(e.target.value)}
                 placeholder="Enter your API key"
               />
               <p className="mt-2 text-xs text-gray-500">
@@ -84,6 +91,16 @@ export const VoicePanel: React.FC = () => {
             </div>
           </div>
         )}
+
+        {apiKey ? (
+          <div className="bg-green-50 p-3 rounded-md mb-4">
+            <p className="text-sm text-green-700">ElevenLabs API key is set</p>
+          </div>
+        ) : (
+          <div className="bg-yellow-50 p-3 rounded-md mb-4">
+            <p className="text-sm text-yellow-700">Please set your ElevenLabs API key in settings</p>
+          </div>
+        )}
       </div>
       
       <div className="p-4 border-t border-gray-200">
@@ -96,7 +113,7 @@ export const VoicePanel: React.FC = () => {
           />
           <Button 
             type="submit" 
-            disabled={voiceState.isListening || voiceState.isSpeaking || !inputText.trim()}
+            disabled={voiceState.isListening || voiceState.isSpeaking || !inputText.trim() || !apiKey}
           >
             <Play className="h-4 w-4" />
           </Button>
@@ -104,7 +121,7 @@ export const VoicePanel: React.FC = () => {
             type="button"
             variant={voiceState.isListening ? "destructive" : "default"}
             onClick={voiceState.isListening ? stopListening : startListening}
-            disabled={voiceState.isSpeaking}
+            disabled={voiceState.isSpeaking || !apiKey}
           >
             {voiceState.isListening ? (
               <MicOff className="h-4 w-4" />

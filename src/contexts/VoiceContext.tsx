@@ -1,5 +1,4 @@
-
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { VoiceState } from '../types';
 import { useToast } from '../hooks/use-toast';
 import { useLeads } from './LeadContext';
@@ -13,6 +12,8 @@ interface VoiceContextType {
   speakText: (text: string) => Promise<void>;
   processFeedback: (text: string) => void;
 }
+
+const ELEVENLABS_API_KEY_STORAGE = 'elevenlabs_api_key';
 
 const VoiceContext = createContext<VoiceContextType | undefined>(undefined);
 
@@ -28,7 +29,27 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
     lastResponse: '',
   });
   
-  const [apiKey, setApiKey] = useState<string>('');
+  const [apiKey, setApiKeyState] = useState<string>('');
+
+  // Load API key from localStorage on component mount
+  useEffect(() => {
+    const storedApiKey = localStorage.getItem(ELEVENLABS_API_KEY_STORAGE);
+    if (storedApiKey) {
+      setApiKeyState(storedApiKey);
+    }
+  }, []);
+
+  // Set API key and save to localStorage
+  const setApiKey = useCallback((key: string) => {
+    setApiKeyState(key);
+    localStorage.setItem(ELEVENLABS_API_KEY_STORAGE, key);
+    if (key) {
+      toast({
+        title: "API Key Saved",
+        description: "Your ElevenLabs API key has been saved",
+      });
+    }
+  }, [toast]);
 
   const startListening = useCallback(() => {
     if (!apiKey) {
