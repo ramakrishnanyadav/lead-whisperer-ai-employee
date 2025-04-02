@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useLeads } from '../../contexts/LeadContext';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { BarChart } from 'lucide-react';
 
 export const LeadList: React.FC = () => {
   const { filteredLeads, selectedLead, selectLead } = useLeads();
@@ -31,11 +32,17 @@ export const LeadList: React.FC = () => {
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-semibold text-gray-800">Leads ({filteredLeads.length})</h2>
           <Link to="/lead-scoring">
-            <Button size="sm" variant="outline">ML Scoring</Button>
+            <Button 
+              size="sm" 
+              className="flex items-center gap-1"
+            >
+              <BarChart className="h-4 w-4" />
+              ML Scoring
+            </Button>
           </Link>
         </div>
         <div className="text-sm text-gray-500">
-          View ML-powered lead conversion predictions
+          View AI-powered lead conversion predictions from our Python ML model
         </div>
       </div>
       
