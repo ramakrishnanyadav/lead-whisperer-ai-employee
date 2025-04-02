@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useLeads } from '../../contexts/LeadContext';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 
 export const LeadList: React.FC = () => {
   const { filteredLeads, selectedLead, selectLead } = useLeads();
@@ -26,7 +28,15 @@ export const LeadList: React.FC = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-800">Leads ({filteredLeads.length})</h2>
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-lg font-semibold text-gray-800">Leads ({filteredLeads.length})</h2>
+          <Link to="/lead-scoring">
+            <Button size="sm" variant="outline">ML Scoring</Button>
+          </Link>
+        </div>
+        <div className="text-sm text-gray-500">
+          View ML-powered lead conversion predictions
+        </div>
       </div>
       
       <div className="flex-1 overflow-y-auto">
